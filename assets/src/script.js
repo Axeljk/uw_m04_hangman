@@ -31,27 +31,28 @@ window.onload = () => {
 
 	startButton.addEventListener("click", beginGame);
 	resetButton.addEventListener("click", resetScore);
-	input = document.addEventListener("keydown", guessLetter);
+	input = document.addEventListener("keyup", guessLetter);
 	update();
 }
 
 // Game functions.
 function beginGame() {
-	timer = setInterval(() => {
-		if (timeLeft > 0) {
-			timeLeft--;
-		} else {
-			clearInterval(timer);
-			endGame();
+	if (gameStarted === false) {
+		timer = setInterval(() => {
+			if (timeLeft > 0) {
+				timeLeft--;
+			} else {
+				clearInterval(timer);
+				endGame();
+			}
 			update();
-		}
+		}, 1000);
+		word = wordList[Math.floor(Math.random() * wordList.length)].toLocaleLowerCase();
+		lettersRemain = word.length;
+		lettersGuessed = new Array(word.length).fill(false);
+		gameStarted = true;
 		update();
-	}, 1000);
-	word = wordList[Math.floor(Math.random() * wordList.length)].toLocaleLowerCase();
-	lettersRemain = word.length;
-	lettersGuessed = new Array(word.length).fill(false);
-	gameStarted = true;
-	update();
+	}
 }
 function guessLetter(event) {
 	if (gameStarted) {
@@ -91,6 +92,9 @@ function update() {
 
 	var display = "";
 
+	if (gameStarted === false) {
+		lettersGuessed = new Array(word.length).fill(true);
+	}
 	for (let i = 0; i < word.length; i++) {
 		if (lettersGuessed[i]) {
 			display += word[i];
